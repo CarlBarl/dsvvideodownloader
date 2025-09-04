@@ -1,0 +1,11 @@
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\bin\Release\net8.0\DsvDownloader.Core.deps.json
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\bin\Release\net8.0\DsvDownloader.Core.dll
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\bin\Release\net8.0\DsvDownloader.Core.pdb
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net8.0\DsvDownloader.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net8.0\DsvDownloader.Core.AssemblyInfoInputs.cache
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net8.0\DsvDownloader.Core.AssemblyInfo.cs
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net8.0\DsvDownloader.Core.csproj.CoreCompileInputs.cache
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net8.0\DsvDownloader.Core.dll
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net8.0\refint\DsvDownloader.Core.dll
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net8.0\DsvDownloader.Core.pdb
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net8.0\ref\DsvDownloader.Core.dll

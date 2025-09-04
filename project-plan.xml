@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProjectPlan>
+  <Title>DSV Video Downloader - Windows 11 GUI (WPF)</Title>
+  <Goal>
+    Build a polished Windows 11 desktop app with an excellent user experience to paste a single DSV .mp4?token=... URL and download it reliably with correct headers, validation, safe filenames, clear progress, cancellation, and privacy safeguards. Implement with C# 12 on .NET 8 using WPF for v1 (faster delivery); WinUI 3 remains an optional future UI. Package with MSIX. Expose core capabilities via Context7 MCP for future AI-assisted extensions.
+  </Goal>
+
+  <ObjectivesAndScope>
+    <MVP>
+      <Item>Single-window GUI: URL input, folder picker, primary Download button.</Item>
+      <Item>Validate URL pattern (.mp4 and ?token=) and allowed host.</Item>
+      <Item>Request headers: Referer=https://play-store-prod.dsv.su.se/, User-Agent=Mozilla/5.0.</Item>
+      <Item>Destination: default A:\DSV (auto-create), user-selectable; remember last used.</Item>
+      <Item>Filename: derive from URL, sanitize, ensure uniqueness; optional open-on-complete.</Item>
+      <Item>Download engine: streamed to disk; verify Content-Type video/mp4 before writing.</Item>
+      <Item>Progress UI: percent, bytes, speed, ETA; Cancel button; rich error messages.</Item>
+      <Item>Privacy: never display or log full token; mask in UI and logs.</Item>
+    </MVP>
+    <OutOfScope>
+      <Item>Auth/login UX</Item>
+      <Item>Batch queue (initially)</Item>
+      <Item>Resume after app restart (initially)</Item>
+      <Item>Proxy UI</Item>
+      <Item>Cross-platform packaging (Windows-first)</Item>
+    </OutOfScope>
+  </ObjectivesAndScope>
+
+  <UXPrinciples>
+    <Pillar>Paste-and-go simplicity with smart defaults.</Pillar>
+    <Pillar>Immediate validation feedback directly under the field.</Pillar>
+    <Pillar>Trust and privacy: mask tokens, no telemetry by default.</Pillar>
+    <Pillar>Responsive progress with accurate speed and ETA.</Pillar>
+    <Pillar>Accessible: keyboard-first, screen reader labels, high contrast support.</Pillar>
+  </UXPrinciples>
+
+  <UserFlows>
+    <Flow id="happy_path">
+      <Step>App detects clipboard URL and offers one-click paste.</Step>
+      <Step>User pastes URL, optionally changes folder.</Step>
+      <Step>Validation passes and Download enables.</Step>
+      <Step>Progress shows bytes, speed, ETA; user can cancel.</Step>
+      <Step>Completion displays success card with Open and Show in Explorer.</Step>
+    </Flow>
+    <Flow id="invalid_url">
+      <Step>URL fails pattern/host; inline message explains required format.</Step>
+    </Flow>
+    <Flow id="expired_token">
+      <Step>401/403; explain token expired/denied; suggest fetching a fresh link.</Step>
+    </Flow>
+    <Flow id="not_mp4">
+      <Step>Content-Type mismatch; show expected vs actual; do not write junk file.</Step>
+    </Flow>
+  </UserFlows>
+
+  <NonFunctionalRequirements>
+    <Robustness>Map HTTP/IO to clear messages; no partial files on failure (delete .part).</Robustness>
+    <Performance>Stream via ResponseHeadersRead; keep UI thread responsive with async/await.</Performance>
+    <Security>Mask tokens in UI/logs; avoid persisting full URLs; HTTPS only.</Security>
+    <Portability>Windows 11 (22H2+) x64; .NET 8; WPF.</Portability>
+    <Accessibility>WCAG AA: focus order, labels, contrast, keyboard access.</Accessibility>
+  </NonFunctionalRequirements>
+
+  <TechnologyChoices>
+    <UIFramework>WPF on .NET 8 (C# 12) for v1; WinUI 3 optional later</UIFramework>
+    <HTTPClient>System.Net.Http.HttpClient with HttpCompletionOption.ResponseHeadersRead</HTTPClient>
+    <DI>Microsoft.Extensions.DependencyInjection for composition</DI>
+    <Config>Settings in %LocalAppData%\DSVDownloader\settings.json</Config>
+    <Logging>Serilog (rolling files in %LocalAppData%\DSVDownloader\Logs), with token masking</Logging>
+    <Packaging>MSIX (primary) and self-contained EXE (optional portable)</Packaging>
+    <Theming>Light/Dark/System theme; high-contrast aware</Theming>
+  </TechnologyChoices>
+
+  <Architecture>
+    <Layers>
+      <Layer name="App.UI">WPF views, view-models, commands, validation messages, progress UI.</Layer>
+      <Layer name="App.Core">Pure logic: URL validation, filename derivation, error mapping, progress calculation.</Layer>
+      <Layer name="App.Infrastructure">HTTP client factory, header policy, file IO, settings, logging.</Layer>
+      <Layer name="App.MCP.Server">MCP tool server exposing validate, derive_filename, download operations.</Layer>
+    </Layers>
+    <UseCases>
+      <Case>ValidateUrl(url) → (isValid, reason)</Case>
+      <Case>DeriveFilename(url) → safeFilename</Case>
+      <Case>DownloadVideo(url, destPath, headers, IProgress) → DownloadResult</Case>
+    </UseCases>
+    <CrossCutting>
+      <Concern>Cancellation via CancellationToken; ensure disposal of streams/HttpResponseMessage.</Concern>
+      <Concern>Token masking helper used in UI and logs.</Concern>
+      <Concern>Error mapping centralised in App.Core.</Concern>
+    </CrossCutting>
+  </Architecture>
+
+  <MCPIntegration>
+    <Strategy>Use Context7 MCP to expose core capabilities for automation and AI assistance.</Strategy>
+    <Client>Optional embedded MCP client for future AI features; not required for MVP.</Client>
+    <Server name="dsv.downloader.mcp">
+      <Tools>
+        <Tool name="validate_dsv_url" inputs="url" outputs="isValid, reason"/>
+        <Tool name="derive_filename" inputs="url" outputs="safeFilename"/>
+        <Tool name="download_mp4" inputs="url, destPath, headers" outputs="bytesWritten, durationMs"/>
+      </Tools>
+      <Security>Never log full tokens; mask query strings; treat URL as sensitive input.</Security>
+    </Server>
+  </MCPIntegration>
+
+  <URLValidation>
+    <Pattern>Ends with .mp4 and includes ?token=; host *.play-store-prod.dsv.su.se.</Pattern>
+    <Regex language="C#"><![CDATA[^(https?):\/\/([a-z0-9-]+)\.play-store-prod\.dsv\.su\.se\/.+\.mp4\?token=.+$]]></Regex>
+    <Notes>Local checks for shape; server is source of truth for token validity.</Notes>
+  </URLValidation>
+
+  <UIDesign>
+    <Window>Main window: title, URL input, folder picker, Download button, status/progress area.</Window>
+    <Controls>
+      <Control>URL TextBox with placeholder, Paste button, and inline validation message.</Control>
+      <Control>Folder Picker defaulting to A:\DSV; persists last used; show free space.</Control>
+      <Control>Primary Download Button (disabled until valid input).</Control>
+      <Control>Progress Bar with percent, bytes, speed, ETA; Cancel button.</Control>
+      <Control>Completion card with file path, Open, and Show in Explorer.</Control>
+      <Control>Settings icon (theme, defaults, auto-open, clipboard behavior).</Control>
+    </Controls>
+    <VisualStyle>Modern spacing, rounded corners, subtle elevation, accessible colors.</VisualStyle>
+    <Clipboard>Detect URLs on clipboard; prompt “Use clipboard URL?” with masked preview.</Clipboard>
+    <Notifications>Toast on completion or failure (user-toggle).</Notifications>
+    <Fallbacks>If A: drive unavailable, prompt to create A:\DSV or choose another folder.</Fallbacks>
+  </UIDesign>
+
+  <DownloadEngine>
+    <Headers>
+      <Header name="Referer">https://play-store-prod.dsv.su.se/</Header>
+      <Header name="User-Agent">Mozilla/5.0</Header>
+    </Headers>
+    <Handshake>Issue GET with ResponseHeadersRead; check Content-Type starts with video/mp4.</Handshake>
+    <Stream>Write to .part file; buffered CopyToAsync; rename atomically on success; delete on failure.</Stream>
+    <Resume>Post-MVP via HTTP Range if ETag/Accept-Ranges available.</Resume>
+    <Backoff>Retry policy for 429/503 with jittered exponential backoff.</Backoff>
+    <Timeouts>Connect/read timeouts; user-feedback on timeouts.</Timeouts>
+    <Progress>Report bytes, speed (EMA smoothing), and ETA to UI.</Progress>
+  </DownloadEngine>
+
+  <FileNaming>
+    <Rule>Base = last path segment before ? (URL-decoded).</Rule>
+    <Rule>Strip Path.GetInvalidFileNameChars().</Rule>
+    <Rule>Fallback dsv_{yyyyMMdd_HHmmss}.mp4 if empty/too long.</Rule>
+    <Rule>On collision, append -1, -2, …</Rule>
+    <Target>Default A:\DSV\&lt;safeName&gt;</Target>
+  </FileNaming>
+
+  <ErrorMapping>
+    <Case code="401,403">Access denied or token expired; retrieve fresh link.</Case>
+    <Case code="404">Video not found; URL may be stale.</Case>
+    <Case code="415 or wrong content-type">Server did not return MP4; show actual type.</Case>
+    <Case code="429,503">Server busy; auto-retry with backoff.</Case>
+    <Case code="Disk/IO">Cannot write to folder; check drive/path/permissions/space.</Case>
+    <Case code="Timeout">Network timeout; suggest retry while token valid.</Case>
+  </ErrorMapping>
+
+  <Settings>
+    <Option>Default folder (A:\DSV) with picker</Option>
+    <Option>Auto-open file on completion</Option>
+    <Option>Clipboard: prompt to auto-fill from clipboard</Option>
+    <Option>Theme: Light/Dark/System</Option>
+    <Option>Mask sensitive info in UI/logs (always on)</Option>
+  </Settings>
+
+  <PackagingAndDistribution>
+    <Installer>MSIX with proper publisher identity and icons.</Installer>
+    <Runtime>Self-contained .NET 8 x64.</Runtime>
+    <Updates>Manual updates initially; consider in-app update later.</Updates>
+  </PackagingAndDistribution>
+
+  <TestingPlan>
+    <HappyPath>Fresh links; verify existence, playback, size sanity.</HappyPath>
+    <Negative>Malformed URL; wrong host; missing ?token=; expired token (401/403); missing/readonly A:.</Negative>
+    <ContentType>Non-MP4 content returned; ensure refusal with clear message.</ContentType>
+    <Filename>Long/encoded names; collisions; invalid chars sanitized.</Filename>
+    <UI>Keyboard navigation; screen reader labels; focus order; contrast.</UI>
+    <Clipboard>Detect and prompt for clipboard URLs.</Clipboard>
+    <MCP>Tools return masked values; no token leaks; correct schemas.</MCP>
+  </TestingPlan>
+
+  <AcceptanceCriteria>
+    <Criterion>Valid URL → user clicks Download → app saves A:\DSV\*.mp4, shows speed/ETA, and provides Open/Explorer actions.</Criterion>
+    <Criterion>Invalid/expired URL → inline explanation, no partial file remains.</Criterion>
+    <Criterion>No full tokens displayed or written to logs.</Criterion>
+    <Criterion>App usable entirely via keyboard and screen reader.</Criterion>
+  </AcceptanceCriteria>
+
+  <DeliveryPlan>
+    <Milestone name="M1">Scaffold solution (WPF), DI, URL validation, basic happy-path download.</Milestone>
+    <Milestone name="M2">Progress UI, error mapping, file naming, settings persistence.</Milestone>
+    <Milestone name="M3">Accessibility pass, theming, packaging (MSIX) and installer polish.</Milestone>
+    <Milestone name="M4">MCP server (validate/download), optional AI help via Context7.</Milestone>
+  </DeliveryPlan>
+
+  <Risks>
+    <Risk>Tokens expire quickly → clear guidance to fetch fresh link.</Risk>
+    <Risk>Server returns HTML error pages → content-type gate + friendly errors.</Risk>
+    <Risk>A: drive missing → prompt to create or choose alternative folder.</Risk>
+  </Risks>
+
+  <FutureEnhancements>
+    <Item>Batch queue and background downloads</Item>
+    <Item>Resume support across restarts</Item>
+    <Item>Checksum verification</Item>
+    <Item>Proxy settings UI</Item>
+    <Item>Cross-platform via Avalonia</Item>
+    <Item>Auto-update</Item>
+    <Item>Token auto-refresh (if supported)</Item>
+  </FutureEnhancements>
+</ProjectPlan>
