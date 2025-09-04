@@ -14,6 +14,7 @@ public partial class MainWindow : Window
     private string _folder = @"A:\\DSV";
     private string? _lastSavedPath;
     private CancellationTokenSource? _cts;
+    private string? _clipboardUrl;
 
     public MainWindow()
     {
@@ -21,6 +22,7 @@ public partial class MainWindow : Window
         this.Title = $"DSV Video Downloader v{AppVersion.Display}";
         InitializeDefaults();
         VersionText.Text = $"v{AppVersion.Display}";
+        CheckClipboardForUrl();
     }
 
     private void InitializeDefaults()
@@ -53,6 +55,24 @@ public partial class MainWindow : Window
             StatusText.Text = reason ?? "";
             DownloadBtn.IsEnabled = false;
         }
+    }
+
+    private void CheckClipboardForUrl()
+    {
+        try
+        {
+            if (System.Windows.Clipboard.ContainsText())
+            {
+                var t = System.Windows.Clipboard.GetText()?.Trim();
+                if (!string.IsNullOrWhiteSpace(t) && UrlValidator.TryValidate(t, out _))
+                {
+                    _clipboardUrl = t;
+                    ClipboardPreview.Text = $"Use clipboard URL? {Core.TokenMasker.MaskUrl(t)}";
+                    ClipboardBanner.Visibility = Visibility.Visible;
+                }
+            }
+        }
+        catch { }
     }
 
     private void PasteBtn_Click(object sender, RoutedEventArgs e)
@@ -101,15 +121,19 @@ public partial class MainWindow : Window
         _cts = new CancellationTokenSource();
         _lastSavedPath = null;
         Progress.Value = 0;
+        Progress.IsIndeterminate = true; // show connecting/unknown-length animation by default
         ProgressDetail.Text = string.Empty;
         StatusText.Text = "Downloading...";
 
         var progress = new Progress<DownloadProgress>(p =>
         {
-            double percent = p.TotalBytes.HasValue && p.TotalBytes.Value > 0
-                ? (double)p.BytesReceived / p.TotalBytes.Value * 100.0
-                : 0;
-            Progress.Value = Math.Min(100, Math.Max(0, percent));
+            if (p.TotalBytes.HasValue && p.TotalBytes.Value > 0)
+            {
+                Progress.IsIndeterminate = false;
+                double percent = (double)p.BytesReceived / p.TotalBytes.Value * 100.0;
+                Progress.Value = Math.Min(100, Math.Max(0, percent));
+                StatusText.Text = "Downloading...";
+            }
 
             var sb = new StringBuilder();
             sb.Append(FormatBytes(p.BytesReceived));
@@ -126,9 +150,15 @@ public partial class MainWindow : Window
             {
                 _lastSavedPath = result.FilePath;
                 StatusText.Text = $"Saved: {result.FilePath} ({FormatBytes(result.Bytes)})";
+                StatusText.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x16, 0xA3, 0x4A));
                 OpenBtn.Visibility = Visibility.Visible;
                 ShowBtn.Visibility = Visibility.Visible;
                 Progress.Value = 100;
+                Progress.IsIndeterminate = false;
+                if (AutoOpenCheck.IsChecked == true)
+                {
+                    OpenBtn_Click(this, new RoutedEventArgs());
+                }
             }
             else
             {
@@ -144,6 +174,8 @@ public partial class MainWindow : Window
             ToggleUI(isDownloading: false);
             _cts?.Dispose();
             _cts = null;
+            Progress.IsIndeterminate = false;
+            StatusText.Foreground = System.Windows.SystemColors.ControlTextBrush;
         }
     }
 
@@ -193,6 +225,51 @@ public partial class MainWindow : Window
                 ShowBtn.Visibility = Visibility.Collapsed;
             }
         }
+    }
+
+    private void UseClipboardBtn_Click(object sender, RoutedEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(_clipboardUrl))
+        {
+            UrlBox.Text = _clipboardUrl;
+        }
+        ClipboardBanner.Visibility = Visibility.Collapsed;
+    }
+
+    private void DismissClipboardBtn_Click(object sender, RoutedEventArgs e)
+    {
+        ClipboardBanner.Visibility = Visibility.Collapsed;
+    }
+
+    private void Window_DragOver(object sender, System.Windows.DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(System.Windows.DataFormats.Text) || e.Data.GetDataPresent(System.Windows.DataFormats.UnicodeText))
+        {
+            e.Effects = System.Windows.DragDropEffects.Copy;
+        }
+        else
+        {
+            e.Effects = System.Windows.DragDropEffects.None;
+        }
+        e.Handled = true;
+    }
+
+    private void Window_Drop(object sender, System.Windows.DragEventArgs e)
+    {
+        try
+        {
+            string? text = null;
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.UnicodeText))
+                text = e.Data.GetData(System.Windows.DataFormats.UnicodeText) as string;
+            else if (e.Data.GetDataPresent(System.Windows.DataFormats.Text))
+                text = e.Data.GetData(System.Windows.DataFormats.Text) as string;
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                var trimmed = text.Trim();
+                UrlBox.Text = trimmed;
+            }
+        }
+        catch { }
     }
 
     private static string FormatBytes(long bytes)

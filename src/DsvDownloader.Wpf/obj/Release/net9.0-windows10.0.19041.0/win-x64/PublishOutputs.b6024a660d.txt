@@ -1,0 +1,8 @@
+C:\Users\Calle\Dev\dsvvideodownloader\publish\gui\DsvDownloader.Wpf.pdb
+C:\Users\Calle\Dev\dsvvideodownloader\publish\gui\D3DCompiler_47_cor3.dll
+C:\Users\Calle\Dev\dsvvideodownloader\publish\gui\PenImc_cor3.dll
+C:\Users\Calle\Dev\dsvvideodownloader\publish\gui\PresentationNative_cor3.dll
+C:\Users\Calle\Dev\dsvvideodownloader\publish\gui\vcruntime140_cor3.dll
+C:\Users\Calle\Dev\dsvvideodownloader\publish\gui\wpfgfx_cor3.dll
+C:\Users\Calle\Dev\dsvvideodownloader\publish\gui\DsvDownloader.Core.pdb
+C:\Users\Calle\Dev\dsvvideodownloader\publish\gui\DsvDownloader.Wpf.exe

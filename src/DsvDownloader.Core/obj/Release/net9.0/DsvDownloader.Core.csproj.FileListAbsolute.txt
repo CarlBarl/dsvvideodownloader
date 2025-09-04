@@ -9,3 +9,4 @@ C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net9.0\
 C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net9.0\refint\DsvDownloader.Core.dll
 C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net9.0\DsvDownloader.Core.pdb
 C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net9.0\ref\DsvDownloader.Core.dll
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Core\obj\Release\net9.0\DsvDownloader.Core.sourcelink.json

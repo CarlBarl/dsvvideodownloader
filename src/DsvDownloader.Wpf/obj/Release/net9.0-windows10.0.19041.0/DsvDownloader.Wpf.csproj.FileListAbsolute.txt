@@ -23,3 +23,5 @@ C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Wpf\obj\Release\net9.0-w
 C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Wpf\obj\Release\net9.0-windows10.0.19041.0\DsvDownloader.Wpf.pdb
 C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Wpf\obj\Release\net9.0-windows10.0.19041.0\DsvDownloader.Wpf.genruntimeconfig.cache
 C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Wpf\obj\Release\net9.0-windows10.0.19041.0\ref\DsvDownloader.Wpf.dll
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Wpf\obj\Release\net9.0-windows10.0.19041.0\App.baml
+C:\Users\Calle\Dev\dsvvideodownloader\src\DsvDownloader.Wpf\obj\Release\net9.0-windows10.0.19041.0\DsvDownloader.Wpf.sourcelink.json

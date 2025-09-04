@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DsvDownloader.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f1ed6ba1ff6f119e2d466971e38e44f1bb7629d6")]
 [assembly: System.Reflection.AssemblyProductAttribute("DsvDownloader.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DsvDownloader.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
