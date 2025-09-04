@@ -10,6 +10,13 @@ A simple, polished Windows app to download DSV .mp4?token=… links reliably.
 
 Version is shown in the UI (title and footer), e.g., `v3`.
 
+## Quick Start (End Users)
+
+**To run the program:**
+1. Download `VideoDownloader-Setup.exe` from the [latest release](https://github.com/CarlBarl/dsvvideodownloader/releases/latest)
+2. Run the downloaded `.exe` file to install and launch the application
+3. The installer will set up the application and create a desktop shortcut
+
 Requirements
 ------------
 - Windows 11 (22H2+)
@@ -79,6 +86,11 @@ Notes
 
 Installer
 ---------
+**For End Users:**
+- Download the latest installer from [GitHub Releases](https://github.com/CarlBarl/dsvvideodownloader/releases/latest)
+- Run `VideoDownloader-Setup.exe` to install and launch the application
+
+**For Developers:**
 - One-click installer EXE (for sharing):
   - Build: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\make-setup.ps1`
   - Output: `dist\VideoDownloader-Setup.exe` — double-click to install + launch.
