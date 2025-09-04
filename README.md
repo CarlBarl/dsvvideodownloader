@@ -13,7 +13,7 @@ Version is shown in the UI (title and footer), e.g., `v3`.
 ## Quick Start (End Users)
 
 **To run the program:**
-1. Download `VideoDownloader-Setup.exe` from the [latest release](https://github.com/CarlBarl/dsvvideodownloader/releases/latest)
+1. Download `VideoDownloader-Setup.exe` directly from the repository: [dist/VideoDownloader-Setup.exe](https://github.com/CarlBarl/dsvvideodownloader/raw/main/dist/VideoDownloader-Setup.exe)
 2. Run the downloaded `.exe` file to install and launch the application
 3. The installer will set up the application and create a desktop shortcut
 
@@ -87,7 +87,7 @@ Notes
 Installer
 ---------
 **For End Users:**
-- Download the latest installer from [GitHub Releases](https://github.com/CarlBarl/dsvvideodownloader/releases/latest)
+- Download the installer directly from the repository: [VideoDownloader-Setup.exe](https://github.com/CarlBarl/dsvvideodownloader/raw/main/dist/VideoDownloader-Setup.exe)
 - Run `VideoDownloader-Setup.exe` to install and launch the application
 
 **For Developers:**
