@@ -1,3 +1,6 @@
+# Allow specific files before general exclusions
+!dist/VideoDownloader-Setup.exe
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -316,12 +319,14 @@ MigrationBackup/
 .ionide/
 
 # Project-specific ignores
-# Distribution/setup files
-dist/
+# Distribution/setup files - exclude everything in dist except the setup file
+dist/*
+!dist/VideoDownloader-Setup.exe
 setup/
 publish/
 
-# Executable files
+# Executable files - allow specific setup file first
+!dist/VideoDownloader-Setup.exe
 *.exe
 *.msi
 *.pkg
